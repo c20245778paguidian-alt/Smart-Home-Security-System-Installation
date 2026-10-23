@@ -1,6 +1,6 @@
 # SafeHaven | Smart Home & Security Solutions
 
-**Live site:** https://YOUR-USERNAME.github.io/YOUR-REPO/
+**Live site:** https:// c20245778paguidian-alt!.github.io/YOUR-REPO/
 
 ## About
 
