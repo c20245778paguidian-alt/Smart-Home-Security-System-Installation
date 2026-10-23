@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeHaven | Smart Home & Security Solutions</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            950: '#020617',
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155',
+                        },
+                        cyanAccent: '#38BDF8',
+                        cyanGlow: '#06B6D4'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- GSAP & ScrollTrigger CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        html:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+        }
+
+        /* Glow effects */
+        .glow-accent {
+            box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.35);
+        }
+        .glow-accent:hover {
+            box-shadow: 0 0 35px 0px rgba(56, 189, 248, 0.55);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38BDF8;
+        }
+
+        /* Range Slider Accent */
+        input[type=range] {
+            accent-color: #38BDF8;
+        }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-100 transition-colors duration-300 dark:bg-navy-950 dark:text-slate-100 bg-slate-50 text-slate-900">
+
+    <!-- Scroll Progress Bar -->
+    <div id="progressBar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-cyan-400 to-sky-500 z-50 w-0 transition-all duration-75"></div>
+
+    <!-- Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-card border-b border-slate-800/60 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-sky-400 flex items-center justify-center text-navy-950 font-bold text-xl shadow-lg glow-accent transition-transform group-hover:scale-105">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-100 dark:text-slate-100 text-slate-900">Safe<span class="text-cyanAccent">Haven</span></span>
+                    <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold -mt-1">Smart Solutions</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-slate-300 dark:text-slate-300 text-slate-700">
+                <a href="#services" class="hover:text-cyanAccent transition-colors">Services</a>
+                <a href="#estimator" class="hover:text-cyanAccent transition-colors">Quote Estimator</a>
+                <a href="#clients" class="hover:text-cyanAccent transition-colors">Target Clients</a>
+                <a href="#faq" class="hover:text-cyanAccent transition-colors">FAQ</a>
+                <a href="#booking" class="hover:text-cyanAccent transition-colors">Consultation</a>
+            </nav>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center gap-4">
+                <!-- Dark Mode Toggle -->
+                <button id="darkModeToggle" class="p-2.5 rounded-xl bg-navy-800 dark:bg-navy-800 bg-slate-200 text-slate-300 dark:text-slate-300 text-slate-800 hover:text-cyanAccent transition-all border border-slate-700/50" aria-label="Toggle Dark Mode">
+                    <i id="darkModeIcon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+
+                <a href="#estimator" class="hidden sm:flex px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-400 text-navy-950 font-semibold text-sm hover:brightness-110 transition-all glow-accent items-center gap-2">
+                    <i class="fa-solid fa-calculator"></i> Build System
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden p-2.5 rounded-xl bg-navy-800 text-slate-300 border border-slate-700/50">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-slate-800/80 bg-navy-900/95 backdrop-blur-xl px-4 pt-3 pb-6 space-y-3">
+            <a href="#services" class="mobile-nav-link block px-3 py-2 rounded-lg text-slate-300 hover:bg-navy-800 hover:text-cyanAccent font-medium">Services</a>
+            <a href="#estimator" class="mobile-nav-link block px-3 py-2 rounded-lg text-slate-300 hover:bg-navy-800 hover:text-cyanAccent font-medium">Quote Estimator</a>
+            <a href="#clients" class="mobile-nav-link block px-3 py-2 rounded-lg text-slate-300 hover:bg-navy-800 hover:text-cyanAccent font-medium">Target Clients</a>
+            <a href="#faq" class="mobile-nav-link block px-3 py-2 rounded-lg text-slate-300 hover:bg-navy-800 hover:text-cyanAccent font-medium">FAQ</a>
+            <a href="#booking" class="mobile-nav-link block px-3 py-2 rounded-lg text-slate-300 hover:bg-navy-800 hover:text-cyanAccent font-medium">Consultation</a>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <section class="relative min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16 overflow-hidden">
+            <!-- Background Radial Glows -->
+            <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-cyan-500/10 rounded-full blur-[130px] pointer-events-none"></div>
+
+            <div class="max-w-5xl mx-auto text-center z-10 space-y-8">
+                <!-- Hero Badge -->
+                <div class="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-cyanAccent/30 text-cyanAccent text-xs sm:text-sm font-semibold tracking-wide uppercase shadow-sm">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyanAccent animate-pulse"></span>
+                    Turnkey Smart Security & Home Automation
+                </div>
+
+                <!-- Hero Title -->
+                <h1 class="hero-title text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+                    Professional Installation, <br class="hidden sm:block"/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-500">Zero Hassle Control</span>
+                </h1>
+
+                <!-- Hero Subtitle -->
+                <p class="hero-subtitle text-base sm:text-xl text-slate-300 dark:text-slate-300 text-slate-600 max-w-3xl mx-auto leading-relaxed">
+                    Custom wireless security cameras, keyless Airbnb deadbolts, smart thermostats, and unified lighting systems—installed and configured in hours by certified professionals.
+                </p>
+
+                <!-- Hero Buttons -->
+                <div class="hero-buttons flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                    <a href="#estimator" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-400 text-navy-950 font-bold text-base hover:brightness-110 transition-all glow-accent flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-sliders"></i> Estimate Your System
+                    </a>
+                    
+                    <button id="replayBtn" class="w-full sm:w-auto px-6 py-4 rounded-xl glass-card text-slate-200 dark:text-slate-200 text-slate-800 hover:border-cyanAccent/50 transition-all font-semibold text-base border border-slate-700/60 flex items-center justify-center gap-2 group">
+                        <i class="fa-solid fa-rotate-right text-cyanAccent group-hover:rotate-180 transition-transform duration-500"></i> Replay Animation
+                    </button>
+                </div>
+
+                <!-- Hero Cards -->
+                <div class="hero-card-grid grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-10 max-w-3xl mx-auto">
+                    <div class="hero-card glass-card p-5 rounded-2xl border border-slate-800/80">
+                        <div class="text-3xl font-extrabold text-cyanAccent">200+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium mt-1">Properties Installed</div>
+                    </div>
+                    <div class="hero-card glass-card p-5 rounded-2xl border border-slate-800/80">
+                        <div class="text-3xl font-extrabold text-cyanAccent">5.0 ★</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium mt-1">Client Satisfaction</div>
+                    </div>
+                    <div class="hero-card glass-card p-5 rounded-2xl border border-slate-800/80 col-span-2 md:col-span-1">
+                        <div class="text-3xl font-extrabold text-cyanAccent">100%</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium mt-1">Custom Configured</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section (Bento Grid) -->
+        <section id="services" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="reveal text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyanAccent text-xs font-bold uppercase tracking-wider">Modular Security Solutions</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold">Smart Hardware Integrated Seamlessly</h2>
+                <p class="text-slate-400 text-sm sm:text-base">We source, mount, wire, and pair all smart hardware to a single, intuitive smartphone app.</p>
+            </div>
+
+            <!-- Bento Grid Container -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Bento 1: Cameras (Large) -->
+                <div class="reveal md:col-span-2 lg:col-span-2 glass-card rounded-3xl p-8 border border-slate-800 hover:border-cyanAccent/40 transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 text-cyan-500/10 group-hover:text-cyan-500/20 transition-colors pointer-events-none">
+                        <i class="fa-solid fa-video text-9xl"></i>
+                    </div>
+                    <div class="space-y-4 z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyanAccent flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold">Wireless Security Cameras</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Weatherproof 2K/4K HD wireless camera arrays with intelligent motion detection zones, color night vision, and encrypted local or cloud video recording options.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-slate-800/60 flex items-center gap-3 text-xs text-cyanAccent font-semibold">
+                        <span><i class="fa-solid fa-check text-xs mr-1"></i> Ring, Nest & Eufy Certified</span>
+                    </div>
+                </div>
+
+                <!-- Bento 2: Keyless Locks -->
+                <div class="reveal md:col-span-1 lg:col-span-2 glass-card rounded-3xl p-8 border border-slate-800 hover:border-cyanAccent/40 transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div class="space-y-4 z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <div class="inline-block px-2.5 py-1 rounded-md bg-cyan-500/20 text-cyanAccent text-[11px] font-bold uppercase tracking-wider mb-1">Airbnb Essential</div>
+                        <h3 class="text-2xl font-bold">Keyless Smart Locks</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Remote code management, guest temporary door codes, automatic deadbolt scheduling, and hands-free proximity unlocking for absolute peace of mind.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Bento 3: Video Doorbells -->
+                <div class="reveal glass-card rounded-3xl p-6 border border-slate-800 hover:border-cyanAccent/40 transition-all space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyanAccent flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Video Doorbells</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Two-way talk audio, package detection alerts, and head-to-toe camera view right on your phone or smart display screen.
+                    </p>
+                </div>
+
+                <!-- Bento 4: Smart Thermostats -->
+                <div class="reveal glass-card rounded-3xl p-6 border border-slate-800 hover:border-cyanAccent/40 transition-all space-y-4">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-temperature-half"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Smart Climate</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">
+                        Ecobee and Nest installation. Cut energy bills up to 23% with eco-friendly scheduling and automatic occupancy sensing.
+                    </p>
+                </div>
+
+                <!-- Bento 5: Integrated Lighting & Mesh Wi-Fi (Wide) -->
+                <div class="reveal md:col-span-2 glass-card rounded-3xl p-6 border border-slate-800 hover:border-cyanAccent/40 transition-all flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+                            <h3 class="text-lg font-bold">Smart Lighting & Wi-Fi Mesh Networks</h3>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">
+                            In-wall smart switches and outdoor motion floodlights paired with high-performance mesh router setups to eliminate dead zones and ensure 100% camera uptime.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Pricing & Cost Estimator Tool -->
+        <section id="estimator" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="reveal glass-card rounded-3xl p-6 sm:p-10 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+                <div class="text-center max-w-3xl mx-auto mb-10 space-y-3">
+                    <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyanAccent text-xs font-bold uppercase tracking-wider">Dynamic Cost Estimator</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold">Build & Price Your Custom System</h2>
+                    <p class="text-slate-400 text-sm">Select your property profile, hardware accessories, and maintenance preferences for an instant cost breakdown.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <!-- Configurator Left Panel -->
+                    <div class="lg:col-span-7 space-y-6">
+                        
+                        <!-- Property Type Selection -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-400" for="propType">1. Select Property Profile</label>
+                            <select id="propType" class="w-full px-4 py-3 rounded-2xl bg-navy-900 border border-slate-800 text-slate-200 text-sm focus:border-cyanAccent focus:outline-none">
+                                <option value="homeowner">Homeowner / Residential Property</option>
+                                <option value="airbnb">Short-Term Rental / Airbnb Host</option>
+                                <option value="office">Small Commercial Office / Retail</option>
+                            </select>
+                        </div>
+
+                        <!-- Hardware Sliders & Toggles -->
+                        <div class="space-y-4 pt-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">2. Select Smart Hardware Quantities</span>
+                            
+                            <!-- Camera Slider -->
+                            <div class="p-4 rounded-2xl bg-navy-900/80 border border-slate-800 space-y-2">
+                                <div class="flex justify-between items-center text-sm font-semibold">
+                                    <span><i class="fa-solid fa-video text-cyanAccent mr-2"></i> HD Security Cameras ($120 ea)</span>
+                                    <span id="camVal" class="text-cyanAccent font-bold">2 Cameras</span>
+                                </div>
+                                <input type="range" id="camSlider" min="0" max="10" value="2" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+                            </div>
+
+                            <!-- Smart Lock Slider -->
+                            <div class="p-4 rounded-2xl bg-navy-900/80 border border-slate-800 space-y-2">
+                                <div class="flex justify-between items-center text-sm font-semibold">
+                                    <span><i class="fa-solid fa-key text-cyanAccent mr-2"></i> Keyless Deadbolts ($150 ea)</span>
+                                    <span id="lockVal" class="text-cyanAccent font-bold">1 Lock</span>
+                                </div>
+                                <input type="range" id="lockSlider" min="0" max="6" value="1" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+                            </div>
+
+                            <!-- Add-on Switches -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label class="p-4 rounded-2xl bg-navy-900/80 border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 transition-colors">
+                                    <span class="text-xs font-semibold flex items-center gap-2">
+                                        <i class="fa-solid fa-bell text-cyanAccent"></i> Video Doorbell ($120)
+                                    </span>
+                                    <input type="checkbox" id="chkDoorbell" checked class="w-5 h-5 rounded border-slate-700 text-cyan-500 focus:ring-0 cursor-pointer">
+                                </label>
+
+                                <label class="p-4 rounded-2xl bg-navy-900/80 border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 transition-colors">
+                                    <span class="text-xs font-semibold flex items-center gap-2">
+                                        <i class="fa-solid fa-temperature-half text-cyanAccent"></i> Smart Thermostat ($110)
+                                    </span>
+                                    <input type="checkbox" id="chkThermostat" class="w-5 h-5 rounded border-slate-700 text-cyan-500 focus:ring-0 cursor-pointer">
+                                </label>
+                            </div>
+
+                            <!-- Lighting Slider -->
+                            <div class="p-4 rounded-2xl bg-navy-900/80 border border-slate-800 space-y-2">
+                                <div class="flex justify-between items-center text-sm font-semibold">
+                                    <span><i class="fa-solid fa-lightbulb text-cyanAccent mr-2"></i> Smart Light Switches ($25 ea)</span>
+                                    <span id="lightVal" class="text-cyanAccent font-bold">4 Switches</span>
+                                </div>
+                                <input type="range" id="lightSlider" min="0" max="16" value="4" step="2" class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Maintenance Retainer Picker -->
+                        <div class="space-y-2 pt-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">3. Select VIP Tech Support Retainer</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <button type="button" data-retainer="0" class="retainer-btn p-3 rounded-2xl border border-cyan-500 bg-cyan-500/10 text-xs font-bold text-center transition-all">
+                                    No Plan
+                                    <span class="block text-[10px] text-slate-400 font-normal mt-0.5">$0 / month</span>
+                                </button>
+                                <button type="button" data-retainer="29" class="retainer-btn p-3 rounded-2xl border border-slate-800 bg-navy-900/80 text-xs font-bold text-center transition-all">
+                                    Essential Care
+                                    <span class="block text-[10px] text-slate-400 font-normal mt-0.5">$29 / month</span>
+                                </button>
+                                <button type="button" data-retainer="49" class="retainer-btn p-3 rounded-2xl border border-slate-800 bg-navy-900/80 text-xs font-bold text-center transition-all">
+                                    VIP Airbnb Host
+                                    <span class="block text-[10px] text-slate-400 font-normal mt-0.5">$49 / month</span>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Live Quote Summary Panel -->
+                    <div class="lg:col-span-5 glass-card rounded-2xl p-6 border border-slate-800 space-y-6 lg:sticky lg:top-28">
+                        <h3 class="text-xl font-bold border-b border-slate-800 pb-4">Estimated Investment Summary</h3>
+                        
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between text-slate-400">
+                                <span>Hardware Equipment Total:</span>
+                                <span id="outHardware" class="font-semibold text-slate-100">$0</span>
+                            </div>
+                            <div class="flex justify-between text-slate-400">
+                                <span>Turnkey Setup & Labor:</span>
+                                <span id="outLabor" class="font-semibold text-slate-100">$150</span>
+                            </div>
+                            <div class="flex justify-between text-slate-400 border-b border-slate-800/80 pb-3">
+                                <span>Selected Retainer Plan:</span>
+                                <span id="outMonthly" class="font-semibold text-cyanAccent">$0 / mo</span>
+                            </div>
+                        </div>
+
+                        <!-- Upfront Total Box -->
+                        <div class="p-4 rounded-xl bg-navy-950 border border-slate-800 space-y-1">
+                            <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Total Estimated Upfront Cost</div>
+                            <div id="outUpfrontTotal" class="text-4xl font-extrabold text-cyanAccent">$0</div>
+                            <p class="text-[11px] text-slate-400 pt-1">Includes device mounting, app syncing, Wi-Fi optimization & user walkthrough.</p>
+                        </div>
+
+                        <button id="bookEstimateBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-400 text-navy-950 font-bold text-base hover:brightness-110 transition-all glow-accent flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calendar-check"></i> Book Installation With This Quote
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Target Client Profiles -->
+        <section id="clients" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="reveal text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyanAccent text-xs font-bold uppercase tracking-wider">Tailored Solutions</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold">Built for Your Specific Space</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Custom configuration packages aligned with your everyday operational needs.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Profile 1: Homeowners -->
+                <div class="reveal glass-card rounded-3xl p-8 border border-slate-800 hover:border-slate-700 transition-all space-y-6">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyanAccent flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-house"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Residential Homeowners</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Protect your family with continuous perimeter surveillance, smart doorbell video notifications, and automated outdoor security lights.
+                    </p>
+                    <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Single app controls all devices</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Zero mandatory monthly contracts</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Family account sharing enabled</li>
+                    </ul>
+                </div>
+
+                <!-- Profile 2: Airbnb Hosts -->
+                <div class="reveal glass-card rounded-3xl p-8 border-2 border-cyanAccent shadow-xl space-y-6 relative">
+                    <div class="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full bg-cyanAccent text-navy-950 font-bold text-[10px] uppercase tracking-wider">
+                        High Demand
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-door-open"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Short-Term Rental Hosts</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Automate guest check-ins with temporary PIN deadbolts and limit heating/cooling costs with smart thermostat guardrails.
+                    </p>
+                    <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> PMS & Airbnb Calendar sync</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Auto-expiring guest door codes</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Remote HVAC lock controls</li>
+                    </ul>
+                </div>
+
+                <!-- Profile 3: Small Commercial Offices -->
+                <div class="reveal glass-card rounded-3xl p-8 border border-slate-800 hover:border-slate-700 transition-all space-y-6">
+                    <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Small Offices & Retail</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Secure commercial entryways, manage employee access logs, and monitor inventory spaces with 4K high-def camera coverage.
+                    </p>
+                    <ul class="space-y-2 text-xs text-slate-300 pt-2 border-t border-slate-800/80">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Multi-user administrative roles</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Extended local DVR/NVR backup</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-cyanAccent"></i> Off-hours motion alarm alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+            <div class="reveal text-center mb-16 space-y-4">
+                <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyanAccent text-xs font-bold uppercase tracking-wider">Got Questions?</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="reveal glass-card rounded-2xl p-6 border border-slate-800 space-y-2">
+                    <h3 class="text-lg font-bold text-slate-200">Do I need to pay a mandatory monthly subscription?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">No. Unlike traditional alarm companies that tie you to 3-year contracts, our hardware works natively via local storage or self-managed cloud options. Optional VIP support retainers are available if you want ongoing technical assistance.</p>
+                </div>
+
+                <div class="reveal glass-card rounded-2xl p-6 border border-slate-800 space-y-2">
+                    <h3 class="text-lg font-bold text-slate-200">How long does a typical installation take?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Most standard residential installations (3-4 cameras, smart lock, video doorbell) are completed within 3 to 5 hours on the same day.</p>
+                </div>
+
+                <div class="reveal glass-card rounded-2xl p-6 border border-slate-800 space-y-2">
+                    <h3 class="text-lg font-bold text-slate-200">Can I integrate my existing smart home devices?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Yes! During setup, our technicians consolidate compatible existing Apple HomeKit, Google Home, Alexa, or SmartThings accessories into your new unified app dashboard.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consultation Booking Form Section -->
+        <section id="booking" class="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+            <div class="reveal glass-card rounded-3xl p-8 sm:p-12 border border-cyan-500/30 shadow-2xl space-y-8">
+                <div class="text-center space-y-3">
+                    <span class="px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyanAccent text-xs font-bold uppercase tracking-wider">Schedule Consultation</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold">Ready for a Safer, Smarter Space?</h2>
+                    <p class="text-slate-400 text-sm">Schedule a free 15-minute phone consultation or lock in your installation slot.</p>
+                </div>
+
+                <form id="consultForm" class="space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="clientName" class="text-xs font-bold uppercase tracking-wider text-slate-400">Full Name</label>
+                            <input type="text" id="clientName" required placeholder="John Doe" class="w-full px-4 py-3 rounded-2xl bg-navy-900 border border-slate-800 text-slate-200 text-sm focus:border-cyanAccent focus:outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="clientPhone" class="text-xs font-bold uppercase tracking-wider text-slate-400">Phone Number</label>
+                            <input type="tel" id="clientPhone" required placeholder="(555) 000-0000" class="w-full px-4 py-3 rounded-2xl bg-navy-900 border border-slate-800 text-slate-200 text-sm focus:border-cyanAccent focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label for="clientNotes" class="text-xs font-bold uppercase tracking-wider text-slate-400">Property Details / Notes</label>
+                        <textarea id="clientNotes" rows="3" placeholder="Tell us about your property or specific security needs..." class="w-full px-4 py-3 rounded-2xl bg-navy-900 border border-slate-800 text-slate-200 text-sm focus:border-cyanAccent focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-400 text-navy-950 font-bold text-base hover:brightness-110 transition-all glow-accent flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Request
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-navy-950 py-12 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 font-bold text-slate-300">
+                <i class="fa-solid fa-shield-halved text-cyanAccent"></i> SafeHaven Smart Solutions
+            </div>
+            <p>&copy; 2026 SafeHaven Technologies. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // --- 1. GSAP & ScrollTrigger Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Progress Bar on Scroll
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Hero Intro Timeline
+        let heroTl = gsap.timeline();
+        function initHeroTimeline() {
+            heroTl.clear();
+            heroTl.from('.hero-badge', { y: -20, opacity: 0, duration: 0.6, ease: 'power2.out' })
+                  .from('.hero-title', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3')
+                  .from('.hero-subtitle', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+                  .from('.hero-buttons', { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' }, '-=0.3')
+                  .from('.hero-card', { y: 30, opacity: 0, duration: 0.6, stagger: 0.15, ease: 'back.out(1.5)' }, '-=0.2');
+        }
+        initHeroTimeline();
+
+        // Replay Button
+        document.getElementById('replayBtn').addEventListener('click', () => {
+            initHeroTimeline();
+            heroTl.restart();
+        });
+
+        // ScrollReveal for Sections
+        gsap.utils.toArray('.reveal').forEach((elem) => {
+            gsap.from(elem, {
+                y: 40,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: elem,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        });
+
+        // --- 2. Dark Mode Toggle ---
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                darkModeIcon.className = 'fa-solid fa-moon text-lg';
+            } else {
+                darkModeIcon.className = 'fa-solid fa-sun text-lg text-amber-500';
+            }
+        });
+
+        // --- 3. Mobile Navigation Menu ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // --- 4. Dynamic Cost Estimator Logic ---
+        const camSlider = document.getElementById('camSlider');
+        const lockSlider = document.getElementById('lockSlider');
+        const lightSlider = document.getElementById('lightSlider');
+        const chkDoorbell = document.getElementById('chkDoorbell');
+        const chkThermostat = document.getElementById('chkThermostat');
+        const propType = document.getElementById('propType');
+
+        const camVal = document.getElementById('camVal');
+        const lockVal = document.getElementById('lockVal');
+        const lightVal = document.getElementById('lightVal');
+
+        const outHardware = document.getElementById('outHardware');
+        const outLabor = document.getElementById('outLabor');
+        const outMonthly = document.getElementById('outMonthly');
+        const outUpfrontTotal = document.getElementById('outUpfrontTotal');
+
+        let selectedRetainer = 0;
+
+        // Retainer Buttons
+        const retainerBtns = document.querySelectorAll('.retainer-btn');
+        retainerBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                retainerBtns.forEach(b => {
+                    b.classList.remove('border-cyan-500', 'bg-cyan-500/10');
+                    b.classList.add('border-slate-800', 'bg-navy-900/80');
+                });
+                btn.classList.remove('border-slate-800', 'bg-navy-900/80');
+                btn.classList.add('border-cyan-500', 'bg-cyan-500/10');
+                selectedRetainer = parseInt(btn.getAttribute('data-retainer'));
+                calculateQuote();
+            });
+        });
+
+        function calculateQuote() {
+            const cams = parseInt(camSlider.value);
+            const locks = parseInt(lockSlider.value);
+            const lights = parseInt(lightSlider.value);
+            const doorbell = chkDoorbell.checked ? 120 : 0;
+            const thermostat = chkThermostat.checked ? 110 : 0;
+
+            // Display Slider Values
+            camVal.textContent = `${cams} Camera${cams !== 1 ? 's' : ''}`;
+            lockVal.textContent = `${locks} Lock${locks !== 1 ? 's' : ''}`;
+            lightVal.textContent = `${lights} Switch${lights !== 1 ? 'es' : ''}`;
+
+            // Hardware Costs
+            const hwTotal = (cams * 120) + (locks * 150) + (lights * 25) + doorbell + thermostat;
+
+            // Turnkey Setup Base Labor
+            let laborCost = 150;
+            if (propType.value === 'airbnb') laborCost = 200;
+            if (propType.value === 'office') laborCost = 250;
+
+            const upfrontTotal = hwTotal + laborCost;
+
+            // Output updates
+            outHardware.textContent = `$${hwTotal}`;
+            outLabor.textContent = `$${laborCost}`;
+            outMonthly.textContent = `$${selectedRetainer} / mo`;
+            outUpfrontTotal.textContent = `$${upfrontTotal}`;
+        }
+
+        // Attach listeners to configurator inputs
+        [camSlider, lockSlider, lightSlider, chkDoorbell, chkThermostat, propType].forEach(elem => {
+            elem.addEventListener('input', calculateQuote);
+            elem.addEventListener('change', calculateQuote);
+        });
+
+        // Initialize Calculation
+        calculateQuote();
+
+        // --- 5. Booking Action Handlers ---
+        document.getElementById('bookEstimateBtn').addEventListener('click', () => {
+            const bookingSec = document.getElementById('booking');
+            bookingSec.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('consultForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you! Your request has been received. Our team will contact you shortly to confirm your consultation.');
+        });
+    </script>
+</body>
+</html>
